@@ -55,7 +55,7 @@ def download_all(title, media_url, img_url):
 
     save_to_dir = create_folder()
     download_to(media_url, os.path.join(save_to_dir, 'master.mp4'))
-    download_to(img_url, os.path.join(save_to_dir, 'source.jiff'))
+    download_to(img_url, os.path.join(save_to_dir, 'source.jfif'))
 
 
 def start():
