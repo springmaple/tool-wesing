@@ -2,7 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 
-FILE_SUFFIX = '_20190730'
+FILE_SUFFIX = '_20191021'
 home = str(Path.home())
 root = os.path.join(home, "Desktop")
 for subdir in [x[0] for x in os.walk(root)]:

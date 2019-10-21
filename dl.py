@@ -13,6 +13,9 @@ def get_wesing(url):
         data = resp.read().decode('utf-8')
     _, _1, part = data.partition('"playurl":"')
     media_url, _, _1 = part.partition('"')
+    if not media_url:
+        _, _1, part = data.partition('"playurl_video":"')
+        media_url, _, _1 = part.partition('"')
 
     _, _1, part = data.partition('"song_name":"')
     title, _, _1 = part.partition('"')
