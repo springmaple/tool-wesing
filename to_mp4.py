@@ -1,8 +1,9 @@
+from datetime import datetime
 import os
 import subprocess
 from pathlib import Path
 
-FILE_SUFFIX = '_20191021'
+FILE_SUFFIX = datetime.today().strftime('%Y%m%d')
 home = str(Path.home())
 root = os.path.join(home, "Desktop")
 for subdir in [x[0] for x in os.walk(root)]:
