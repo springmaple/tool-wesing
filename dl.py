@@ -23,6 +23,14 @@ def get_wesing(url):
     _, _1, part = data.partition('"cover":"')
     img_url, _, _1 = part.partition('"')
 
+    # For Quan Ming K Ge only:
+    # `bsy` is too slow and always fail, manually replace to `ws`.
+    media_url = media_url.replace('bsy.stream.kg.qq.com', 'ws.stream.kg.qq.com')
+
+    # For Quan Ming K Ge only:
+    # Replace invalid characters for folder name.
+    title = title.replace(':', '-')
+
     return title, media_url, img_url
 
 
