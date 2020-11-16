@@ -71,6 +71,8 @@ def start():
                 obj = get_wesing(url)
             elif 'starmaker' in url:
                 obj = get_starmaker(url)
+            elif 'kg.qq.com' in url:
+                obj = get_wesing(url)
             else:
                 raise Exception('unsupported url ' + url)
 
