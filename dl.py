@@ -83,6 +83,8 @@ def start():
                 obj = get_wesing(url)
             elif 'kg2.qq.com' in url:
                 obj = get_wesing(url)
+            elif 'kg3.qq.com' in url:
+                obj = get_wesing(url)
             else:
                 raise Exception('unsupported url ' + url)
 
