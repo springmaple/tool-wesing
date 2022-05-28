@@ -57,7 +57,7 @@ def _get_starmaker(url: str) -> DlInfo:
 
 
 def _get_5sing_fc(url: str) -> DlInfo:
-    matches = re.findall(r'http://5sing.kugou.com/fc/(\d+).html', url, re.IGNORECASE | re.MULTILINE)
+    matches = re.findall(r'5sing.kugou.com/fc/(\d+).html', url, re.IGNORECASE | re.MULTILINE)
     song_id = matches[0]
     data_url = f'http://service.5sing.kugou.com/song/getsongurl?songid={song_id}&songtype=fc'
     with urllib.request.urlopen(data_url) as resp:
