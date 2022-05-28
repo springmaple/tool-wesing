@@ -55,6 +55,10 @@ def main(raw_urls_file_path: str,
     dl_infos = [get_dl_info(url) for url in urls]
     print('[OK]', flush=True)
     for index, dl_info in enumerate(dl_infos, start=1):
+        if not all([dl_info.title, dl_info.music_url, dl_info.img_url]):
+            print(f'[{index}/{len(dl_infos)}] Metadata missing! [FAILED]', flush=True)
+            continue
+           
         print(f'[{index}/{len(dl_infos)}] {dl_info.title} ', end='', flush=True)
 
         cache_dir = get_cache_dir(get_hash(dl_info))
