@@ -43,6 +43,10 @@ def _change_file_ext(source_path: str, new_ext: str) -> str:
     return os.path.join(os.path.dirname(source_path), f'{filename}.{new_ext}')
 
 
+def _is_url_ext(url: str, ext: str) -> bool:
+    return url.lower().partition('?')[0].endswith(ext.lower())
+
+
 def main(raw_urls_file_path: str,
          dest_dir_path: str,
          album_name: str,
@@ -58,21 +62,26 @@ def main(raw_urls_file_path: str,
         if not all([dl_info.title, dl_info.music_url, dl_info.img_url]):
             print(f'[{index}/{len(dl_infos)}] Metadata missing! [FAILED]', flush=True)
             continue
-           
+
         print(f'[{index}/{len(dl_infos)}] {dl_info.title} ', end='', flush=True)
 
         cache_dir = get_cache_dir(get_hash(dl_info))
         _write_dl_info_to_cache(cache_dir, dl_info)
         print(f'({os.path.basename(cache_dir)}) -> ', end='', flush=True)
 
-        mp4_path = _dl_media_to_cache(cache_dir, 'raw.mp4', dl_info.music_url)
-        jfif_path = _dl_media_to_cache(cache_dir, 'raw.jfif', dl_info.img_url)
+        if _is_url_ext(dl_info.music_url, 'mp3'):  # only satisfy 5sing
+            mp3_path = _dl_media_to_cache(cache_dir, 'raw.mp3', dl_info.music_url)
+        else:  # assume is mp4
+            mp4_path = _dl_media_to_cache(cache_dir, 'raw.mp4', dl_info.music_url)
+            mp3_path = _change_file_ext(mp4_path, 'mp3')
+            _convert_media_to_cache(mp4_path, mp3_path)
 
-        mp3_path = _change_file_ext(mp4_path, 'mp3')
-        jpg_path = _change_file_ext(jfif_path, 'jpg')
-
-        _convert_media_to_cache(mp4_path, mp3_path)
-        _convert_media_to_cache(jfif_path, jpg_path)
+        if _is_url_ext(dl_info.img_url, 'jpg'):  # only satisfy 5sing
+            jpg_path = _dl_media_to_cache(cache_dir, 'raw.jpg', dl_info.img_url)
+        else:  # assume is jfif
+            jfif_path = _dl_media_to_cache(cache_dir, 'raw.jfif', dl_info.img_url)
+            jpg_path = _change_file_ext(jfif_path, 'jpg')
+            _convert_media_to_cache(jfif_path, jpg_path)
 
         final_mp3_path = compile_final_mp3(dl_info.title,
                                            album_name,
