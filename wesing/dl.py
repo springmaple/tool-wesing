@@ -1,9 +1,10 @@
 import json
 import os
+import re
 import urllib.request
 from collections import namedtuple
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Callable
 
 home = str(Path.home())
 root = os.path.join(home, "Desktop")
@@ -12,25 +13,29 @@ DlInfo = namedtuple('DlInfo', ['title', 'music_url', 'img_url'])
 
 
 def _get_wesing(url: str) -> DlInfo:
+    def _get_first_non_empty(elements: List[Any], getter: Callable[[Any], str]):
+        for element in elements:
+            string = getter(element)
+            if string:
+                return string
+
     with urllib.request.urlopen(url) as resp:
         data = resp.read().decode('utf-8')
-    _, _1, part = data.partition('"playurl":"')
-    media_url, _, _1 = part.partition('"')
-    if not media_url:
-        _, _1, part = data.partition('"playurl_video":"')
-        media_url, _, _1 = part.partition('"')
 
-    _, _1, part = data.partition('"song_name":"')
-    title, _, _1 = part.partition('"')
+    matches = re.findall(r'"(playurl|playurl_video)":"(.*?)"', data, re.IGNORECASE | re.MULTILINE)
+    media_url = _get_first_non_empty(matches, lambda e: e[1].strip())
 
-    _, _1, part = data.partition('"cover":"')
-    img_url, _, _1 = part.partition('"')
+    matches = re.findall(r'"song_name":"(.*?)"', data, re.IGNORECASE | re.MULTILINE)
+    title = _get_first_non_empty(matches, lambda e: e.strip())
 
-    # For Quan Ming K Ge only:
+    matches = re.findall(r'"cover":"(.*?)"', data, re.IGNORECASE | re.MULTILINE)
+    img_url = _get_first_non_empty(matches, lambda e: e.strip())
+
+    # For 全民K歌 only:
     # `bsy` is too slow and always fail, manually replace to `ws`.
     media_url = media_url.replace('bsy.stream.kg.qq.com', 'ws.stream.kg.qq.com')
 
-    # For Quan Ming K Ge only:
+    # For 全民K歌 only:
     # Replace invalid characters for folder name.
     title = title.replace(':', '-')
 
